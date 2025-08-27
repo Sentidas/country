@@ -1,13 +1,11 @@
 package ru.sentidas.country.controller;
 
-
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sentidas.country.domain.Country;
-import ru.sentidas.country.domain.CountryError;
-import ru.sentidas.country.domain.CountryNameUpdateRequest;
+import ru.sentidas.country.domain.CreateCountryInput;
+import ru.sentidas.country.domain.UpdateCountryInput;
 import ru.sentidas.country.service.CountryService;
 
 import java.util.List;
@@ -25,35 +23,28 @@ public class CountryController {
 
     @GetMapping("/all")
     public List<Country> all() {
-        return countryService.allCountries();
+        return countryService.getAll();
     }
 
     @PostMapping("/add")
-    public Country add(@RequestBody Country country) {
-        return countryService.addCountry(country);
+    public Country add(@Valid @RequestBody CreateCountryInput country) {
+        return countryService.add(country);
     }
 
+    @PatchMapping("/update/{id}")
+    public Country update(@PathVariable String id,
+                          @Valid @RequestBody UpdateCountryInput country) {
+        return countryService.update(id, country);
+    }
 
-    @PatchMapping("/edit/{code}")
-    public ResponseEntity<?> edit(
-            @PathVariable String code,
-            @RequestBody CountryNameUpdateRequest request) {
+    @GetMapping("/{id}")
+    public Country byId(@PathVariable String id) {
+        return countryService.getById(id);
+    }
 
-        if (!code.matches("[A-Z]{2}")) {
-            return ResponseEntity.badRequest()
-                    .body(new CountryError("INVALID_CODE", "Country code must be exactly 2 uppercase letters"));
-        }
-
-        if (request.updatedName() == null || request.updatedName().isBlank()) {
-            return ResponseEntity.badRequest()
-                    .body(new CountryError("EMPTY_NAME", "Country name cannot be empty"));
-        }
-        try {
-            Country country = countryService.editCountry(code, request.updatedName());
-            return ResponseEntity.ok(country);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new CountryError("CODE_COUNTRY_NOT_FOUND", e.getMessage()));
-        }
+    @GetMapping("/search")
+    public Country byName(@RequestParam("name") String name) {
+        return countryService.getByName(name);
     }
 }
+
