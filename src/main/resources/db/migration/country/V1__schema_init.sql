@@ -3,8 +3,9 @@ create extension if not exists "uuid-ossp";
 create table if not exists "country"
 (
     id           UUID unique        not null default uuid_generate_v1() primary key,
-    name varchar(50) unique not null,
-    code varchar(50) unique not null
+    name varchar(50) not null,
+    code varchar(50) unique not null,
+    last_modify_date date
 );
 
 insert into "country" (name, code)

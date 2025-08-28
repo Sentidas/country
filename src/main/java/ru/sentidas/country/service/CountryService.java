@@ -1,20 +1,29 @@
 package ru.sentidas.country.service;
 
-import ru.sentidas.country.domain.Country;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.sentidas.country.domain.CountryJson;
 import ru.sentidas.country.domain.CreateCountryInput;
 import ru.sentidas.country.domain.UpdateCountryInput;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public interface CountryService {
 
-    Country getById(String id);
+    CountryJson getById(String id);
 
-    Country getByName(String name);
+    CountryJson getByName(String name);
 
-    List<Country> getAll();
+    List<CountryJson> getByNames(String name);
 
-    Country add(CreateCountryInput country);
+    List<CountryJson> getAll();
 
-    Country update(String id, UpdateCountryInput country);
+    Page<CountryJson> getAll(Pageable pageable, @Nullable String searchQuery);
+
+    CountryJson add(CreateCountryInput country);
+
+    CountryJson update(String id, UpdateCountryInput country);
+
+    void deleteById(String id);
 }
