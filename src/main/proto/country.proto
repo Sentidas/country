@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 package ru.sentidas.grpc.country;
 
@@ -9,14 +10,23 @@ option java_package = "ru.sentidas.grpc.country";
 option java_outer_classname = "CountryProto";
 
 service CountryService {
-  rpc Country(IdRequest) returns (CountryResponse) {}
+  rpc CountryById(IdRequest) returns (CountryResponse) {}
+  rpc CountryByName(NameRequest) returns (CountryResponse) {}
+  rpc SearchCountries(NameRequest) returns (CountriesResponse) {}
+  rpc AllCountries(google.protobuf.Empty) returns (CountriesResponse) {}
+  rpc CountriesPaged(PageRequest) returns (PagedCountries) {}
   rpc AddCountry (CountryRequest) returns (CountryResponse) {}
   rpc UpdateCountry (UpdateCountryRequest) returns (CountryResponse) {}
+  rpc DeleteCountry (IdRequest) returns (google.protobuf.Empty) {}
   rpc randomCountries (CountRequest) returns (stream CountryResponse) {}
 }
 
 message IdRequest {
   string id = 1;
+}
+
+message NameRequest {
+  string name = 1;
 }
 
 message CountRequest {
@@ -34,10 +44,29 @@ message UpdateCountryRequest {
   string code = 3;
 }
 
+message
+    PageRequest {
+  int32 page = 1;
+  int32 size = 2;
+  string searchQuery = 3;
+}
+
 message CountryResponse {
   string id = 1;
   string name = 2;
   string code = 3;
+}
+
+message CountriesResponse {
+  repeated CountryResponse countries = 1;
+}
+
+message PagedCountries {
+  repeated CountryResponse countries = 1;
+  int64 totalElements = 2;
+  int32 totalPages = 3;
+  int32 pageNumber = 4;
+  int32 pageSize = 5;
 }
 
 

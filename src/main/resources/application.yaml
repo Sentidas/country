@@ -41,3 +41,6 @@ server:
 
 api:
   version: V1.0
+
+country:
+  base-uri: 'http://127.0.0.1:8283'
